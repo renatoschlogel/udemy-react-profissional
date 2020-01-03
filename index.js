@@ -3,26 +3,69 @@ import ReactDOM from "react-dom";
 
 import "./index.scss";
 
-const App = () => (
-    <div className="container">
-        <NewNote/>
-        <NoteList/>
-    </div>
-);
+class App extends React.Component{
 
-const NewNote = () => {
-    return (
-        <div className="new-note">
-            <input type="text" className="new-note__input"/>
-        </div>
-    );
+    state = {
+        notes: []
+    }
+    
+    handleAddNote = texto => {
+        this.setState(prevState => ({
+            notes: prevState.notes.concat(texto)
+        }));
+    }
+
+    render(){
+        return (
+            <div className="container">
+                <NewNote onAddNote={this.handleAddNote}/>
+                <NoteList notes={this.state.notes}/>
+            </div>
+        );
+    }
 }
 
-const NoteList = () => (
+class NewNote extends React.Component {
+
+    state = {
+        texto: ''
+    }
+
+    render(){
+        const { onAddNote } = this.props;
+        const { texto } = this.state;
+
+        return (
+            <div className="new-note">
+                <input type="text" 
+                       className="new-note__input"
+                       placeholder="Digite aqui"
+                       value={texto}
+                       onChange={event =>{
+                         this.setState({
+                            texto: event.target.value
+                         });
+                       }}
+                       onKeyPress={event => {
+             
+                         if(event.key === "Enter"){
+                            onAddNote(event.target.value);
+                            this.setState({
+                                texto: ''
+                             });
+                         }
+                       }}
+                       />
+            </div>
+        );
+    }
+}
+
+const NoteList = ({notes}) => (
     <div className="node-list">
-        <div className="note">Teste</div>
-        <div className="note">Teste</div>
-        <div className="note">Teste</div>
+        {notes.map(note => (
+           <div className="note">{note}</div>
+         ))}
     </div>
 
 )
