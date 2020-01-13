@@ -42,8 +42,16 @@ body {
     @include box-shadow(2);
 
     &__text {
-        flex: 1;
-      }
+       flex: 1;
+    }
+
+    &__input {
+       flex: 1;
+       border-top: 0;
+       border-right: 0;
+       border-left: 0;
+       border-bottom: 1px solid #c7c7c7;
+    }
     
     &__button {
        background-color: transparent;
@@ -53,5 +61,13 @@ body {
        &--hidden {
          visibility: hidden;
        }
+
+       &--red {
+           color: brown;
+       }
+
+       &--green {
+        color:darkgreen
+    }
     }
 }

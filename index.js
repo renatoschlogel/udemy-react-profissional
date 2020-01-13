@@ -50,6 +50,18 @@ class App extends React.Component {
     });
   };
 
+  handleEdit = (id, text) => {
+    this.setState(prevState => {
+      const newNotes = prevState.notes.slice();
+      const index = newNotes.findIndex(note => note.id === id);
+      newNotes[index].text = text;
+
+      return {
+        notes: newNotes
+      };
+    });
+  };
+
   render() {
     return (
       <div className="container">
@@ -58,6 +70,7 @@ class App extends React.Component {
           notes={this.state.notes}
           onMove={this.handleMove}
           onDelete={this.handleDelete}
+          onEdit={this.handleEdit}
         />
       </div>
     );
@@ -104,10 +117,59 @@ const Icon = ({ icon }) => {
 };
 
 class Note extends React.Component {
+
+  state = {
+    isEditing: false
+  }
+
+  handleEdit = () => {
+      this.setState({isEditing: true});
+  }
+
+  handleSave = () => {
+    this.props.onEdit(this.props.note.id, this.input.value);
+    this.setState({isEditing: false});
+  }
+
+  handleCancel = () => {
+    this.setState({isEditing: false});
+  }
+
   render() {
+    const {note, onEdit, onDelete, index, onMove, total} = this.props;
+    const {isEditing} = this.state;
+
     return (
       <div key={note.id} className="note">
-        <span className="note__text">{`${note.text}`}</span>
+        {isEditing ? (
+          <input
+            type="text"
+            className="note__input"
+            defaultValue={note.text}
+            ref={c => {
+              this.input = c;
+            }}
+          />
+        ) : (
+          <span className="note__text">{`${note.text}`}</span>
+        )}
+
+        {isEditing && (
+          <React.Fragment>
+            <button
+              className="note__button note__button--green"
+              onClick={this.handleSave}
+            >
+              <Icon icon="done_outline" />
+            </button>
+            <button
+              className="note__button note__button--red"
+              onClick={this.handleCancel}
+            >
+              <Icon icon="cancel" />
+            </button>
+          </React.Fragment>
+        )}
 
         <button
           className={classNames("note__button", {
@@ -122,7 +184,7 @@ class Note extends React.Component {
 
         <button
           className={classNames("note__button", {
-            "note__button--hidden": index == notes.length - 1
+            "note__button--hidden": index == total - 1
           })}
           onClick={() => {
             onMove("down", index);
@@ -134,20 +196,41 @@ class Note extends React.Component {
         <button
           className="note__button"
           onClick={() => {
-            onEdit(note.id);
+            this.handleEdit();
           }}
+          disabled={isEditing}
         >
           <Icon icon="edit" />
+        </button>
+
+        <button
+          className="note__button"
+          onClick={() => {
+            onDelete(note.id);
+          }}
+          disabled={isEditing}
+        >
+          <Icon icon="delete" />
         </button>
       </div>
     );
   }
 }
 
-const NoteList = ({ notes, onMove, onDelete }) => (
+const NoteList = ({ notes, onMove, onDelete, onEdit }) => (
+
   <div className="node-list">
     {notes.map((note, index) => (
-      <Note />
+
+       
+      <Note
+        note={note}
+        onEdit={onEdit}
+        onDelete={onDelete}
+        index={index}
+        onMove={onMove}
+        total={notes.length}
+      />
     ))}
   </div>
 );
