@@ -8,7 +8,11 @@ import "./index.scss";
 class App extends React.Component{
 
     state = {
-        notes: []
+        notes: [{id: 1, text: "a"},
+                {id: 2, text: "b"},
+                {id: 3, text: "c"},
+                {id: 4, text: "d"},
+               ]
     }
     
     handleAddNote = texto => {
@@ -36,11 +40,27 @@ class App extends React.Component{
         })
     }
 
+    handleDelete = id =>{
+        
+        this.setState( prevState => {
+            
+            const newNotes = prevState.notes.slice();
+            const index = newNotes.findIndex(note => note.id === id);
+            newNotes.splice(index, 1);
+
+            return {
+                notes: newNotes
+            };
+        })
+    }
+
     render(){
         return (
             <div className="container">
                 <NewNote onAddNote={this.handleAddNote}/>
-                <NoteList notes={this.state.notes} onMove={this.handleMove}/>
+                <NoteList notes={this.state.notes} 
+                          onMove={this.handleMove}
+                          onDelete={this.handleDelete}/>
             </div>
         );
     }
@@ -86,7 +106,7 @@ const Icon = ({icon}) => {
     return <i className="material-icons">{icon}</i>
 }
 
-const NoteList = ({notes, onMove}) => (
+const NoteList = ({notes, onMove, onDelete}) => (
     <div className="node-list">
         {notes.map((note, index) => (
            <div key={note.id} className="note">
@@ -111,6 +131,16 @@ const NoteList = ({notes, onMove}) => (
                     >
                     <Icon icon="arrow_downward"/>
                 </button>
+
+                <button className="note__button"
+                        onClick ={() => {
+                        onDelete(note.id);
+                        }}
+                    >
+                    <Icon icon="delete"/>
+                </button>
+
+                
                 
            </div>
          ))}
