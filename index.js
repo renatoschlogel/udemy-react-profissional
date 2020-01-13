@@ -140,7 +140,7 @@ class Note extends React.Component {
     const {isEditing} = this.state;
 
     return (
-      <div key={note.id} className="note">
+      <div className="note">
         {isEditing ? (
           <input
             type="text"
@@ -224,6 +224,7 @@ const NoteList = ({ notes, onMove, onDelete, onEdit }) => (
 
        
       <Note
+        key={note.id}
         note={note}
         onEdit={onEdit}
         onDelete={onDelete}
